@@ -62,6 +62,7 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <input type="hidden" id="categoryId">
                         <div class="form-group">
                             <label for="recipient-name" class="control-label">分类名称:</label>
                             <input type="text" class="form-control" id="recipient-name">
@@ -125,6 +126,11 @@
                 } else {
                     $('#myModalLabel').text('编辑分类');
                     $('#btnAddOrEdit').text('编辑').addClass('btn-success').removeClass('btn-primary');
+
+                    //编辑第一步：把需要编辑的当前这一行的文章类别的名字和别名显示在模态框上
+                    $('#recipient-name').val($(e.relatedTarget).parent().prev().prev().text().trim());
+                    $('#message-text').val($(e.relatedTarget).parent().prev().text().trim());
+                    $('#categoryId').val($(e.relatedTarget).attr('data-id'));
                 }
             })
 
@@ -158,6 +164,27 @@
                     })
                 } else {
                     //没有btn-primary这个类就是编辑
+                    //获取 要编辑的 文章类型名和别名
+                    var categoryId = $('#categoryId').val().trim(); //id
+                    var categoreName = $('#recipient-name').val().trim(); //文章类别名称
+                    var categoreSlug = $('#message-text').val().trim(); // 文章类别 别名
+
+                    //发送ajax请求来完成编辑
+                    $.ajax({
+                        type:'post',
+                        url:window.BigNew.category_edit,
+                        data:{
+                            id:categoryId,
+                            name:categoreName,
+                            slug:categoreSlug
+                        },
+                        success:function(backData){
+                            if(backData.code == 200){
+                                $('#myModal').modal('hide');
+                                getData();
+                            }
+                        }
+                    })
                 }
             })
 
