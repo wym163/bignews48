@@ -90,7 +90,7 @@
             <td>{{v.slug}}</td>
             <td class="text-center">
                 <a href="javascript:void(0)" data-id={{v.id}} data-toggle="modal" data-target="#myModal" class=" btn btn-info btn-xs">编辑</a>
-                <a href="javascript:void(0)" data-id={{v.id}} class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void(0)" data-id={{v.id}} class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
         {{/each}}
@@ -193,6 +193,29 @@
                 //把模态框里面的form表单清空
                 //reset() 可以把表单中的元素重置为它们的默认值
                 $('#myModal form')[0].reset();//dom对象调用dom方法
+            })
+
+            //五：给删除按钮设置点击事件
+            //委托注册
+            $('tbody').on('click','.btn-delete',function(){
+                if(confirm('你确定要删除吗')){
+                    //获取你要删除的这一行的文章类别id
+                    var categoryId = $(this).attr('data-id');
+                    //发送ajax请求完成删除
+                    $.ajax({
+                        type:'post',
+                        url:window.BigNew.category_delete,
+                        data:{
+                            id:categoryId
+                        },
+                        success:function(backData){
+                            if(backData.code == 204){
+                                //删除成功重新加载一下数据  
+                                getData();
+                            }
+                        }
+                    })
+                }
             })
 
         })
